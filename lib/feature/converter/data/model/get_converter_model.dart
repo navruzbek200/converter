@@ -1,49 +1,72 @@
+import 'package:json_annotation/json_annotation.dart';
 import '/feature/converter/domain/entity/get_converter_entity.dart';
 
-class GetConverterModel extends GetConverterEntity {
-   GetConverterModel({
-    required super.id,
-    required super.code,
-    required super.ccy,
-    required super.ccyNmRu,
-    required super.ccyNmUz,
-    required super.ccyNmUzc,
-    required super.ccyNmEn,
-    required super.nominal,
-    required super.rate,
-    required super.diff,
-    required super.date,
+part 'get_converter_model.g.dart';
+
+@JsonSerializable()
+class GetConverterModel {
+  final int id;
+
+  @JsonKey(name: 'Code')
+  final String? code;
+
+  @JsonKey(name: 'Ccy')
+  final String? ccy;
+
+  @JsonKey(name: 'CcyNm_RU')
+  final String? ccyNmRu;
+
+  @JsonKey(name: 'CcyNm_UZ')
+  final String? ccyNmUz;
+
+  @JsonKey(name: 'CcyNm_UZC')
+  final String? ccyNmUzc;
+
+  @JsonKey(name: 'CcyNm_EN')
+  final String? ccyNmEn;
+
+  @JsonKey(name: 'Nominal')
+  final String? nominal;
+
+  @JsonKey(name: 'Rate')
+  final String? rate;
+
+  @JsonKey(name: 'Diff')
+  final String? diff;
+
+  @JsonKey(name: 'Date')
+  final String? date;
+
+  const GetConverterModel({
+    required this.id,
+    this.code,
+    this.ccy,
+    this.ccyNmRu,
+    this.ccyNmUz,
+    this.ccyNmUzc,
+    this.ccyNmEn,
+    this.nominal,
+    this.rate,
+    this.diff,
+    this.date,
   });
 
-  factory GetConverterModel.fromJson(Map<String, dynamic> json) {
-    return GetConverterModel(
-      id: json['id'],
-      code: json['Code'],
-      ccy: json['Ccy'],
-      ccyNmRu: json['CcyNm_RU'],
-      ccyNmUz: json['CcyNm_UZ'],
-      ccyNmUzc: json['CcyNm_UZC'],
-      ccyNmEn: json['CcyNm_EN'],
-      nominal: json['Nominal'],
-      rate: json['Rate'],
-      diff: json['Diff'],
-      date: json['Date'],
-    );
-  }
+  factory GetConverterModel.fromJson(Map<String, dynamic> json) =>
+      _$GetConverterModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'Code': code,
-      'Ccy': ccy,
-      'CcyNm_RU': ccyNmRu,
-      'CcyNm_UZ': ccyNmUz,
-      'CcyNm_UZC': ccyNmUzc,
-      'CcyNm_EN': ccyNmEn,
-      'Nominal': nominal,
-      'Rate': rate,
-      'Diff': diff,
-      'Date': date,
-    };
-  }
+  Map<String, dynamic> toJson() => _$GetConverterModelToJson(this);
+
+  GetConverterEntity toEntity() => GetConverterEntity(
+    id: id,
+    code: code,
+    ccy: ccy,
+    ccyNmRu: ccyNmRu,
+    ccyNmUz: ccyNmUz,
+    ccyNmUzc: ccyNmUzc,
+    ccyNmEn: ccyNmEn,
+    nominal: nominal,
+    rate: rate,
+    diff: diff,
+    date: date,
+  );
 }

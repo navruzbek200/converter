@@ -34,7 +34,7 @@ Future<void> initDI() async {
         () => GetConverterUsecase(sl()),
   );
   // bloc = register factory
-  sl.registerFactory<GetConvertBloc>(
-        () => GetConvertBloc(sl()),
+  sl.registerFactory<GetConverterBloc>(
+        () => GetConverterBloc(sl()),
   );
 }

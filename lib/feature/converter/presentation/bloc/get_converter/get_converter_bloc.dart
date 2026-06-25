@@ -1,49 +1,34 @@
-import 'dart:io';
-
 import 'package:bloc/bloc.dart';
-import '/feature/converter/domain/entity/get_converter_entity.dart';
+import '../../../domain/entity/get_converter_entity.dart';
 import '/feature/converter/domain/usecase/get_converter_usecase.dart';
-import '/feature/converter/presentation/bloc/get_converter/get_converter_state.dart';
-import '/feature/converter/presentation/bloc/get_converter_event.dart';
-import 'package:dio/dio.dart';
 
 
+import 'package:freezed_annotation/freezed_annotation.dart';
+part 'get_converter_event.dart';
+part 'get_converter_state.dart';
+part 'get_converter_bloc.freezed.dart';
 
-class GetConvertBloc extends Bloc<GetConverterEvent, GetConverterState> {
-  final GetConverterUsecase getConverterUsecase;
+class GetConverterBloc extends Bloc<GetConverterEvent, GetConverterState> {
+  final GetConverterUsecase usecase;
 
-  GetConvertBloc(this.getConverterUsecase) : super(GetConverterInitial()) {
-    on<GetConvertE>(_onGetConvert);
+  GetConverterBloc(this.usecase) : super(const GetConverterState.initial()) {
+    on<GetConverterEvent>(_onEvent);
   }
 
-  Future<void> _onGetConvert(
-      GetConvertE event,
-      Emitter<GetConverterState> emit,
-      ) async {
-    emit(GetConverterLoading());
+  Future<void> _onEvent(
+    GetConverterEvent event,
+    Emitter<GetConverterState> emit,
+  ) async {
+    await event.when(fetch: () => _load(emit), refresh: () => _load(emit));
+  }
+
+  Future<void> _load(Emitter<GetConverterState> emit) async {
+    emit(const GetConverterState.loading());
     try {
-      final List<GetConverterEntity> result = await getConverterUsecase();
-      emit(GetConverterSuccess(list: result));
-    } on DioException catch (e) {
-      emit(GetConverterError(message: _mapDioErrorToMessage(e)));
-    } catch (_) {
-      emit(const GetConverterError(message: "Noma’lum xato yuz berdi"));
+      final list = await usecase();
+      emit(GetConverterState.success(list: list));
+    } catch (e) {
+      emit(const GetConverterState.failure(message: "Xatolik"));
     }
-  }
-
-  String _mapDioErrorToMessage(DioException error) {
-    if (error.type == DioExceptionType.unknown && error.error is SocketException) {
-      return "Internet ulanmagan. Iltimos, tarmoqni tekshiring.";
-    } else if (error.response?.statusCode == 401 ||
-        error.response?.statusCode == 404) {
-      return "So‘rovda xatolik (401/404).";
-    } else if (error.type == DioExceptionType.connectionTimeout ||
-        error.type == DioExceptionType.receiveTimeout) {
-      return "So‘rov vaqtida javob kelmadi. Keyinroq urinib ko‘ring.";
-    } else if (error.response?.statusCode == 500) {
-      return "Serverda nosozlik bor. Iltimos, keyinroq urinib ko‘ring.";
-    }
-
-    return "Noma’lum xato yuz berdi. Iltimos, qayta urinib ko‘ring.";
   }
 }
